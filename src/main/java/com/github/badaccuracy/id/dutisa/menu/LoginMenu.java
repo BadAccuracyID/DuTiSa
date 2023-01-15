@@ -19,14 +19,13 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 
 import java.io.File;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class LoginMenu {
 
-    private Stage stage;
+    private final Stage stage;
     private Scene scene;
 
     private TextField usernameField;
@@ -55,7 +54,6 @@ public class LoginMenu {
         stage.setOnCloseRequest((event) -> System.exit(0));
         stage.setScene(scene);
         stage.setTitle("NAR 23-1");
-        stage.initStyle(StageStyle.TRANSPARENT);
         stage.setResizable(false);
         stage.show();
     }
@@ -109,7 +107,7 @@ public class LoginMenu {
         labelBox.setAlignment(Pos.CENTER);
         leftPane.getChildren().add(labelBox);
 
-        Label mottoLabel = new Label("\"Breaking and Overcoming Challenges Through \n          Courage, Hardword and Persistence\"");
+        Label mottoLabel = new Label("\"Breaking and Overcoming Challenges Through \n          Courage, Hard Work and Persistence\"");
         mottoLabel.setFont(Font.font("Arial", FontWeight.BOLD, 12));
         mottoLabel.setTextFill(Color.WHITE);
         mottoLabel.setAlignment(Pos.CENTER);

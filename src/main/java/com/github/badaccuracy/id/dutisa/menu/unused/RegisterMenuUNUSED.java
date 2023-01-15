@@ -1,6 +1,7 @@
-package com.github.badaccuracy.id.dutisa.menu;
+package com.github.badaccuracy.id.dutisa.menu.unused;
 
 import com.github.badaccuracy.id.dutisa.DuTiSa;
+import com.github.badaccuracy.id.dutisa.menu.LoginMenu;
 import com.github.badaccuracy.id.dutisa.utils.Utils;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -22,7 +23,7 @@ import java.io.File;
 
 public class RegisterMenuUNUSED {
 
-    private Stage stage;
+    private final Stage stage;
     private Scene scene;
 
     private TextField traineeNumber;
@@ -159,7 +160,6 @@ public class RegisterMenuUNUSED {
 
             if (!canRegister) {
                 errorLabel.setText("Username already taken!");
-                return;
             }
 
             // main menu

@@ -1,4 +1,4 @@
-package com.github.badaccuracy.id.dutisa.menu;
+package com.github.badaccuracy.id.dutisa.menu.unused;
 
 import com.github.badaccuracy.id.dutisa.DuTiSa;
 import com.github.badaccuracy.id.dutisa.utils.Utils;
@@ -22,7 +22,7 @@ import java.io.File;
 
 public class LoginMenuUNUSED {
 
-    private Stage stage;
+    private final Stage stage;
     private Scene scene;
 
     private TextField traineeNumber;

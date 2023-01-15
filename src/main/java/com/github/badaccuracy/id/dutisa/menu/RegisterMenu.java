@@ -18,15 +18,15 @@ import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.TextAlignment;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 
 import java.io.File;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class RegisterMenu {
 
-    private Stage stage;
+    private final Stage stage;
     private Scene scene;
 
     private TextField usernameField;
@@ -59,7 +59,6 @@ public class RegisterMenu {
         stage.setOnCloseRequest((event) -> System.exit(0));
         stage.setScene(scene);
         stage.setTitle("NAR 23-1");
-        stage.initStyle(StageStyle.TRANSPARENT);
         stage.setResizable(false);
         stage.show();
     }
@@ -113,7 +112,7 @@ public class RegisterMenu {
         labelBox.setAlignment(Pos.CENTER);
         leftPane.getChildren().add(labelBox);
 
-        Label mottoLabel = new Label("\"Breaking and Overcoming Challenges Through \n          Courage, Hardword and Persistence\"");
+        Label mottoLabel = new Label("\"Breaking and Overcoming Challenges Through \n          Courage, Hard Work and Persistence\"");
         mottoLabel.setFont(Font.font("Arial", FontWeight.BOLD, 12));
         mottoLabel.setTextFill(Color.WHITE);
         mottoLabel.setAlignment(Pos.CENTER);
@@ -205,25 +204,29 @@ public class RegisterMenu {
         majorField.setLayoutY(335);
         rightPane.getChildren().add(majorField);
 
-//        binusianField = new binusianField();
-//        binusianField.setPromptText("Binusian");
-//        binusianField.setPrefWidth(400);
-//        binusianField.setPrefHeight(30);
-//        binusianField.setAlignment(Pos.CENTER);
-//        binusianField.getStylesheets().add(styleCss);
-//        binusianField.getStyleClass().add("login-field");
-//        binusianField.applyCss();
-//        binusianField.setLayoutX(50);
-//        binusianField.setLayoutY(375);
-//        rightPane.getChildren().add(binusianField);
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Select your profile picture");
+        fileChooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg")
+        );
 
+        Button pfpButton = new Button("Select profile picture");
+        pfpButton.setPrefWidth(400);
+        pfpButton.setPrefHeight(30);
+        pfpButton.getStylesheets().add(styleCss);
+        pfpButton.getStyleClass().add("login-btn");
+        pfpButton.applyCss();
+        pfpButton.setLayoutX(50);
+        pfpButton.setLayoutY(375);
+        pfpButton.setOnAction(event -> pfpFile = fileChooser.showOpenDialog(null));
+        rightPane.getChildren().add(pfpButton);
 
         HBox buttonsBox = new HBox();
         buttonsBox.setSpacing(50);
         buttonsBox.setPrefHeight(100);
         buttonsBox.setPrefWidth(500);
         buttonsBox.setLayoutX(1);
-        buttonsBox.setLayoutY(370);
+        buttonsBox.setLayoutY(420);
         buttonsBox.setAlignment(Pos.CENTER);
 
         Button loginButton = new Button("Create Account");
@@ -254,7 +257,7 @@ public class RegisterMenu {
         errorLabel.setAlignment(Pos.CENTER);
         errorLabel.setContentDisplay(ContentDisplay.CENTER);
         errorLabel.setLayoutX(170);
-        errorLabel.setLayoutY(500);
+        errorLabel.setLayoutY(520);
         rightPane.getChildren().add(errorLabel);
 
         loginPane.getChildren().add(rightPane);
@@ -267,15 +270,25 @@ public class RegisterMenu {
         return event -> {
             String username = this.usernameField.getText();
             String password = this.passwordField.getText();
+            String traineeName = this.realNameField.getText();
+            String jurusan = this.majorField.getText();
+            String angkatan = this.angkatanField.getText();
 
-            if (username.isEmpty() || password.isEmpty()) {
+            if (username.isEmpty() || password.isEmpty() || traineeName.isEmpty() || jurusan.isEmpty() || angkatan.isEmpty()) {
                 errorLabel.setText("Please fill in all fields");
                 return;
             }
 
-            boolean canLogin = DuTiSa.getInstance().getTraineeManager().canLogin(username, password);
-            if (!canLogin) {
-                errorLabel.setText("Invalid username or password");
+            if (pfpFile == null) {
+                errorLabel.setText("Please select your profile picture");
+                return;
+            }
+
+            boolean canRegister = DuTiSa.getInstance().getTraineeManager()
+                    .canRegister(username, traineeName, password, jurusan, angkatan, pfpFile);
+
+            if (!canRegister) {
+                errorLabel.setText("Username already taken!");
                 return;
             }
 

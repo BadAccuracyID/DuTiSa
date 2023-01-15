@@ -1,4 +1,4 @@
-package com.github.badaccuracy.id.dutisa.menu;
+package com.github.badaccuracy.id.dutisa.menu.unused;
 
 import com.github.badaccuracy.id.dutisa.DuTiSa;
 import com.github.badaccuracy.id.dutisa.database.manager.TraineeManager;
@@ -22,7 +22,7 @@ public class MainMenuUNUSED {
 
     private final DuTiSa main = DuTiSa.getInstance();
 
-    private Stage stage;
+    private final Stage stage;
     private Scene scene;
 
     private TextField searchField;

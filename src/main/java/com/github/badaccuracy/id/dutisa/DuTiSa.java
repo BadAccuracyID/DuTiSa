@@ -11,6 +11,7 @@ import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import lombok.Getter;
 
 import java.io.File;
@@ -73,6 +74,7 @@ public class DuTiSa extends Application {
     @Override
     public void start(Stage stage) {
         this.stage = stage;
+        stage.initStyle(StageStyle.TRANSPARENT);
         new LoginMenu(this.stage);
     }
 

@@ -1,11 +1,7 @@
 package com.github.badaccuracy.id.dutisa.menu;
 
-import com.github.badaccuracy.id.dutisa.DuTiSa;
 import com.github.badaccuracy.id.dutisa.database.objects.CommentData;
-import com.github.badaccuracy.id.dutisa.database.objects.TraineeData;
 import com.github.badaccuracy.id.dutisa.utils.Utils;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -19,9 +15,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
-import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 
 import java.io.File;
 import java.sql.Date;
@@ -29,7 +23,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class MainMenu {
 
-    private Stage stage;
+    private final Stage stage;
     private Scene scene;
 
     private TextField searchField;
@@ -60,7 +54,6 @@ public class MainMenu {
         stage.setOnCloseRequest((event) -> System.exit(0));
         stage.setScene(scene);
         stage.setTitle("NAR 23-1");
-        stage.initStyle(StageStyle.TRANSPARENT);
         stage.setResizable(false);
         stage.show();
     }
