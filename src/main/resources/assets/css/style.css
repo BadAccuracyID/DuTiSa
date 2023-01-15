@@ -1,11 +1,29 @@
 * {
-    primary-color: #0084ff;
+    primary-color: #2e22ac;
+}
+
+.font-replace {
+    -fx-font-family: 'Poppins', Calibri, Helvetica;
 }
 
 .login-field {
     -fx-font-family: 'Poppins', Calibri, Helvetica;
     -fx-font-size: 14px;
-    -fx-border-color: linear-gradient(from 25% 25% to 100% 100%, #0084ff, #28a9d4);
+    -fx-border-color: linear-gradient(from 25% 25% to 100% 100%, #2e22ac, #e34c9d);
+}
+
+.text-area {
+    -fx-font-family: 'Poppins', Calibri, Helvetica;
+    -fx-border-color: linear-gradient(from 25% 25% to 100% 100%, #2e22ac, #e34c9d);
+}
+
+.search-field {
+    -fx-font-family: 'Poppins', Calibri, Helvetica;
+    -fx-border-color: primary-color;
+    -fx-border-radius: 3em;
+    -fx-border-width: 3px;
+
+    -fx-background-radius: 3em;
 }
 
 .login-btn {
@@ -22,15 +40,24 @@
 }
 
 .login-btn:hover {
-    -fx-border-color: linear-gradient(from 25% 25% to 100% 100%, #0084ff, #28a9d4);
-    -fx-background-color: linear-gradient(from 25% 25% to 100% 100%, #0084ff, #28a9d4);
+    -fx-border-color: linear-gradient(from 25% 25% to 100% 100%, #2e22ac, #e34c9d);
+    -fx-background-color: linear-gradient(from 25% 25% to 100% 100%, #2e22ac, #e34c9d);
     -fx-text-fill: #FFFFFF;
 }
 
 .blue-purple-gradient {
-    -fx-background-color: linear-gradient(from 25% 25% to 100% 100%, #0084ff, #28a9d4);
+    -fx-background-color: linear-gradient(from 25% 25% to 100% 100%, #2e22ac, #e34c9d);
+}
+
+#title {
+    -fx-text-fill: #2e22ac;
 }
 
 #image-shadow {
     -fx-effect: dropshadow(three-pass-box, #000000, 10, 0, 2, 2);
+}
+
+#copyright {
+    -fx-font-family: 'Arial';
+    -fx-text-fill: #ffffff;
 }

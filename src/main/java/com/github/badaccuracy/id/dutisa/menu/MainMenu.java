@@ -30,17 +30,16 @@ import java.util.concurrent.atomic.AtomicReference;
 public class MainMenu {
 
     private final Stage stage;
+    private ListView<String> listView;
     private Scene scene;
-
     private String currentTraineeView;
     private String currentUser;
-    private int currIdx = 0;
-
-    private TextField searchField;
-
+    private int currIdx;
     private ImageView traineeProfilePicture;
     private Label fullTraineeNameLabel;
     private Label fullTraineeBinusianMajorLabel;
+    private List<CommentData> commentDataList;
+    private AnchorPane rightPane;
 
     private Label errorLabel;
 
@@ -62,8 +61,38 @@ public class MainMenu {
         traineeProfilePicture.setImage(new Image(trainee.getPhoto().toURI().toString()));
         fullTraineeNameLabel.setText(trainee.getTraineeNumber() + " - " + trainee.getTraineeName());
         fullTraineeBinusianMajorLabel.setText(trainee.getBinusian() + " - " + trainee.getMajor());
-
         currentTraineeView = trainee.getTraineeNumber();
+        commentDataList = traineeManager.getComments(trainee.getTraineeNumber());
+
+        // add all comments to scrollable scroll pane
+        listView = new ListView<>();
+        listView.setPrefSize(400, 350);
+        listView.setTranslateX(10);
+        listView.setTranslateY(10);
+        listView.setOpacity(0.8);
+        listView.setStyle("-fx-border-color: linear-gradient(from 25% 25% to 100% 100%, #2e22ac, #e34c9d);");
+        listView.setCellFactory(param -> new ListCell<>() {
+            @Override
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null || item.isBlank()) {
+                    setText(null);
+                } else {
+                    setText(item);
+                }
+            }
+        });
+        listView.setLayoutX(50);
+        listView.setLayoutY(10);
+
+        commentDataList.forEach(commentData -> {
+            String comment = commentData.getComment();
+            String date = commentData.getDate().toString();
+            String author = commentData.getCommenter();
+            listView.getItems().add(author + "@" + date + ": " + comment);
+        });
+        rightPane.getChildren().add(listView);
+
 
         AtomicReference<Double> x = new AtomicReference<>(0.0);
         AtomicReference<Double> y = new AtomicReference<>(0.0);
@@ -122,6 +151,7 @@ public class MainMenu {
         imageBox.getChildren().add(traineeProfilePicture);
         leftPane.getChildren().add(imageBox);
 
+        // T142 - Efran Nathanael
         fullTraineeNameLabel = new Label();
         fullTraineeNameLabel.setFont(Font.font("Arial", FontWeight.EXTRA_BOLD, 28));
         fullTraineeNameLabel.setTextFill(Color.WHITE);
@@ -129,6 +159,10 @@ public class MainMenu {
         fullTraineeNameLabel.setContentDisplay(ContentDisplay.CENTER);
         HBox nameBox = new HBox(fullTraineeNameLabel);
         nameBox.setAlignment(Pos.CENTER);
+        nameBox.setLayoutX(50);
+        nameBox.setLayoutY(370);
+        nameBox.setAlignment(Pos.CENTER);
+        leftPane.getChildren().add(nameBox);
 
         fullTraineeBinusianMajorLabel = new Label();
         fullTraineeBinusianMajorLabel.setFont(Font.font("Arial", FontWeight.BOLD, 18));
@@ -137,13 +171,10 @@ public class MainMenu {
         fullTraineeBinusianMajorLabel.setContentDisplay(ContentDisplay.CENTER);
         HBox binusianBox = new HBox(fullTraineeBinusianMajorLabel);
         binusianBox.setAlignment(Pos.CENTER);
-
-        VBox nameAndBinusianBox = new VBox(nameBox, binusianBox);
-        nameAndBinusianBox.setLayoutX(100);
-        nameAndBinusianBox.setLayoutY(390);
-        nameAndBinusianBox.setAlignment(Pos.CENTER);
-        nameAndBinusianBox.setSpacing(10);
-        leftPane.getChildren().add(nameAndBinusianBox);
+        binusianBox.setLayoutX(50);
+        binusianBox.setLayoutY(410);
+        binusianBox.setAlignment(Pos.CENTER);
+        leftPane.getChildren().add(binusianBox);
 
 
         Button prevButton = new Button("Previous");
@@ -168,6 +199,14 @@ public class MainMenu {
             fullTraineeBinusianMajorLabel.setText(trainee.getBinusian() + " - " + trainee.getMajor());
 
             currentTraineeView = trainee.getTraineeNumber();
+            commentDataList = DuTiSa.getInstance().getTraineeManager().getComments(currentTraineeView);
+            listView.getItems().clear();
+            commentDataList.forEach(commentData -> {
+                String comment = commentData.getComment();
+                String date = commentData.getDate().toString();
+                String author = commentData.getCommenter();
+                listView.getItems().add(author + "@" + date + ": " + comment);
+            });
         });
         leftPane.getChildren().add(prevButton);
 
@@ -193,12 +232,21 @@ public class MainMenu {
             fullTraineeBinusianMajorLabel.setText(trainee.getBinusian() + " - " + trainee.getMajor());
 
             currentTraineeView = trainee.getTraineeNumber();
+            commentDataList = DuTiSa.getInstance().getTraineeManager().getComments(currentTraineeView);
+            listView.getItems().clear();
+            commentDataList.forEach(commentData -> {
+                String comment = commentData.getComment();
+                String date = commentData.getDate().toString();
+                String author = commentData.getCommenter();
+                listView.getItems().add(author + "@" + date + ": " + comment);
+            });
         });
         leftPane.getChildren().add(nextButton);
 
         // search bar
         TextField searchField = new TextField();
         searchField.setPromptText("Search Trainee");
+        searchField.setAlignment(Pos.CENTER);
         searchField.setLayoutX(100);
         searchField.setLayoutY(550);
         searchField.setPrefWidth(300);
@@ -213,7 +261,7 @@ public class MainMenu {
 
             for (int i = 0; i < size; i++) {
                 TraineeData trainee = trainees.get(i);
-                if (trainee.getTraineeNumber().equals(newValue)) {
+                if (trainee.getTraineeNumber().equalsIgnoreCase(newValue)) {
                     currIdx = i;
                     traineeProfilePicture.setImage(new Image(trainee.getPhoto().toURI().toString()));
                     fullTraineeNameLabel.setText(trainee.getTraineeNumber() + " - " + trainee.getTraineeName());
@@ -230,7 +278,7 @@ public class MainMenu {
         loginPane.getChildren().add(leftPane);
 
         // right
-        AnchorPane rightPane = new AnchorPane();
+        rightPane = new AnchorPane();
         rightPane.setPrefWidth(520);
         rightPane.setPrefHeight(560);
         rightPane.setLayoutY(20);
@@ -240,11 +288,12 @@ public class MainMenu {
 
         // the comments, Y = 120 | X = 215?
 
+
         TextArea commentArea = new TextArea();
         commentArea.setPrefWidth(400);
         commentArea.setPrefHeight(90);
         commentArea.setLayoutX(60);
-        commentArea.setLayoutY(420);
+        commentArea.setLayoutY(400);
         commentArea.setWrapText(true);
         commentArea.setPromptText("Write your comments here...");
         commentArea.getStyleClass().add("text-area");
@@ -259,7 +308,7 @@ public class MainMenu {
         submitButton.getStylesheets().add(styleCss);
         submitButton.applyCss();
         submitButton.setLayoutX(200);
-        submitButton.setLayoutY(517);
+        submitButton.setLayoutY(510);
         submitButton.setOnAction(this.onSubmit(commentArea));
         rightPane.getChildren().add(submitButton);
 
@@ -280,10 +329,24 @@ public class MainMenu {
     private EventHandler<ActionEvent> onSubmit(TextArea commentArea) {
         return event -> {
             String text = commentArea.getText();
-
+            if (text.isEmpty()) {
+                errorLabel.setText("Comment cannot be empty!");
+                return;
+            }
 
             CommentData commentData = new CommentData(0, currentTraineeView, text, currentUser, new Date(System.currentTimeMillis()));
             DuTiSa.getInstance().getTraineeManager().postComment(commentData);
+
+            commentArea.clear();
+
+            commentDataList = DuTiSa.getInstance().getTraineeManager().getComments(currentTraineeView);
+            listView.getItems().clear();
+            commentDataList.forEach(it -> {
+                String comment = it.getComment();
+                String date = it.getDate().toString();
+                String author = it.getCommenter();
+                listView.getItems().add(author + "@" + date + ": " + comment);
+            });
         };
     }
 }

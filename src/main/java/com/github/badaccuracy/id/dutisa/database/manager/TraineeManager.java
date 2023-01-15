@@ -82,6 +82,10 @@ public class TraineeManager {
         return true;
     }
 
+    public List<CommentData> getComments(String traineeNumber) {
+        return commentDatastore.getComments(traineeNumber);
+    }
+
     public void postComment(CommentData commentData) {
         commentDatastore.addComment(commentData);
         commentDatastore.insertNewComment(commentData);

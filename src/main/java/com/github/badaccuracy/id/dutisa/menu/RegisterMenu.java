@@ -2,9 +2,12 @@ package com.github.badaccuracy.id.dutisa.menu;
 
 import com.github.badaccuracy.id.dutisa.DuTiSa;
 import com.github.badaccuracy.id.dutisa.utils.Utils;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
+import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
@@ -20,6 +23,7 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 import java.io.File;
 import java.util.concurrent.atomic.AtomicReference;
@@ -37,10 +41,12 @@ public class RegisterMenu {
     private File pfpFile = null;
 
 
+    private Group foxGroup;
     private Label errorLabel;
 
     public RegisterMenu(Stage stage) {
         this.stage = stage;
+        makeFox();
         initUI();
 
         AtomicReference<Double> x = new AtomicReference<>(0.0);
@@ -88,17 +94,9 @@ public class RegisterMenu {
         leftPane.applyCss();
 
         VBox imageBox = new VBox();
-        imageBox.setLayoutY(70);
+        imageBox.setLayoutY(200);
         imageBox.setLayoutX(120);
-        ImageView imageView = new ImageView();
-        File logoFile = Utils.getFile("assets/images/logo.png");
-        imageView.setImage(new Image(logoFile.toURI().toString()));
-        imageView.setPreserveRatio(true);
-        imageView.setPickOnBounds(true);
-        imageView.setFitWidth(272);
-        imageView.setFitHeight(272);
-
-        imageBox.getChildren().add(imageView);
+        imageBox.getChildren().add(foxGroup);
         leftPane.getChildren().add(imageBox);
 
         Label narlabel = new Label("NAR 23-1");
@@ -300,6 +298,62 @@ public class RegisterMenu {
         return event -> {
             new LoginMenu(stage);
         };
+    }
+
+    private void makeFox() {
+        ImageView fox1 = new ImageView(new Image(Utils.getFile("assets/images/dog/dog0.png").toURI().toString()));
+        ImageView fox2 = new ImageView(new Image(Utils.getFile("assets/images/dog/dog1.png").toURI().toString()));
+        ImageView fox3 = new ImageView(new Image(Utils.getFile("assets/images/dog/dog2.png").toURI().toString()));
+        ImageView fox4 = new ImageView(new Image(Utils.getFile("assets/images/dog/dog3.png").toURI().toString()));
+        ImageView fox5 = new ImageView(new Image(Utils.getFile("assets/images/dog/dog4.png").toURI().toString()));
+        ImageView fox6 = new ImageView(new Image(Utils.getFile("assets/images/dog/dog5.png").toURI().toString()));
+        ImageView fox7 = new ImageView(new Image(Utils.getFile("assets/images/dog/dog6.png").toURI().toString()));
+        ImageView fox8 = new ImageView(new Image(Utils.getFile("assets/images/dog/dog7.png").toURI().toString()));
+
+        foxGroup = new Group();
+
+        foxGroup.setTranslateX(100);
+        foxGroup.setTranslateY(0);
+
+        Timeline keyFrames = new Timeline();
+        keyFrames.setCycleCount(Timeline.INDEFINITE);
+        keyFrames.getKeyFrames().add(new KeyFrame(
+                Duration.millis(400), (ActionEvent event) -> foxGroup.getChildren().setAll(fox4)
+        ));
+        keyFrames.getKeyFrames().add(new KeyFrame(
+                Duration.millis(800), (ActionEvent event) -> foxGroup.getChildren().setAll(fox5)
+        ));
+        keyFrames.getKeyFrames().add(new KeyFrame(
+                Duration.millis(1200), (ActionEvent event) -> foxGroup.getChildren().setAll(fox6)
+        ));
+        keyFrames.getKeyFrames().add(new KeyFrame(
+                Duration.millis(1600), (ActionEvent event) -> foxGroup.getChildren().setAll(fox7)
+        ));
+        keyFrames.getKeyFrames().add(new KeyFrame(
+                Duration.millis(2000), (ActionEvent event) -> foxGroup.getChildren().setAll(fox6)
+        ));
+        keyFrames.getKeyFrames().add(new KeyFrame(
+                Duration.millis(2400), (ActionEvent event) -> foxGroup.getChildren().setAll(fox5)
+        ));
+        keyFrames.getKeyFrames().add(new KeyFrame(
+                Duration.millis(2800), (ActionEvent event) -> foxGroup.getChildren().setAll(fox4)
+        ));
+        keyFrames.getKeyFrames().add(new KeyFrame(
+                Duration.millis(3200), (ActionEvent event) -> foxGroup.getChildren().setAll(fox5)
+        ));
+        keyFrames.getKeyFrames().add(new KeyFrame(
+                Duration.millis(3600), (ActionEvent event) -> foxGroup.getChildren().setAll(fox6)
+        ));
+        keyFrames.getKeyFrames().add(new KeyFrame(
+                Duration.millis(4000), (ActionEvent event) -> foxGroup.getChildren().setAll(fox7)
+        ));
+        keyFrames.getKeyFrames().add(new KeyFrame(
+                Duration.millis(4400), (ActionEvent event) -> foxGroup.getChildren().setAll(fox6)
+        ));
+        keyFrames.getKeyFrames().add(new KeyFrame(
+                Duration.millis(4800), (ActionEvent event) -> foxGroup.getChildren().setAll(fox5)
+        ));
+        keyFrames.play();
     }
 
 }
