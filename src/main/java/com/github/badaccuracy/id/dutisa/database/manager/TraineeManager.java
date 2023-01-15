@@ -4,20 +4,24 @@ import com.github.badaccuracy.id.dutisa.DuTiSa;
 import com.github.badaccuracy.id.dutisa.database.connector.MySQL;
 import com.github.badaccuracy.id.dutisa.database.impl.CommentDatastore;
 import com.github.badaccuracy.id.dutisa.database.impl.TraineeDatastore;
+import com.github.badaccuracy.id.dutisa.database.objects.CommentData;
 import com.github.badaccuracy.id.dutisa.database.objects.DatabaseConfig;
 import com.github.badaccuracy.id.dutisa.database.objects.LoginData;
 import com.github.badaccuracy.id.dutisa.database.objects.TraineeData;
+import com.github.badaccuracy.id.dutisa.googleapi.SheetAPI;
 import com.github.badaccuracy.id.dutisa.utils.Utils;
 
 import java.io.File;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class TraineeManager {
 
     private final DuTiSa main;
     private final MySQL mySQL;
+    private final SheetAPI sheetAPI;
     private CommentDatastore commentDatastore;
     private TraineeDatastore traineeDatastore;
 
@@ -32,6 +36,7 @@ public class TraineeManager {
                 databaseConfig.getPassword(),
                 databaseConfig.isUseSSL()
         );
+        this.sheetAPI = new SheetAPI();
 
         main.getExecutorManager().gocExecutor("MySQLLoader")
                 .execute(() -> {
@@ -70,6 +75,15 @@ public class TraineeManager {
         traineeDatastore.addTrainee(traineeData);
         traineeDatastore.insertNewTrainee(traineeData);
         return true;
+    }
+
+    public void postComment(CommentData commentData) {
+        commentDatastore.addComment(commentData);
+        commentDatastore.insertNewComment(commentData);
+
+        main.getExecutorManager().gocExecutor("CommentPoster")
+                .execute(() -> sheetAPI.doWrite(commentData.getTraineeNumber(), Collections.singletonList(commentData)));
+
     }
 
 }

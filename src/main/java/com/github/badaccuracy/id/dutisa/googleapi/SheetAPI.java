@@ -30,7 +30,7 @@ import java.util.List;
 public class SheetAPI {
 
     private final String applicationName = "NAR23-1 Spreadsheet Sync";
-    private final String spreadsheetId = "1pPsYMbCEXDfWKYABKIwxcUy0xevOW3Ww-8dEumLvdbc";
+    private final String spreadsheetId = "1w7dkUu2Ly_89dRq-PrdxwHQgqul8tR3svRPMyNx6tL8";
     private final JsonFactory jsonFactory = GsonFactory.getDefaultInstance();
     private final List<String> scope = Collections.singletonList(SheetsScopes.SPREADSHEETS);
 
@@ -71,7 +71,7 @@ public class SheetAPI {
         for (CommentData commentData : commentDataList) {
             List<Object> row = new ArrayList<>();
             row.add(commentData.getCommenter());
-            row.add(commentData.getDate());
+            row.add(commentData.getDate().toLocalDate().toString());
             row.add(commentData.getComment());
 
             values.add(row);
@@ -86,8 +86,7 @@ public class SheetAPI {
                     .setInsertDataOption("INSERT_ROWS")
                     .execute();
         } catch (GoogleJsonResponseException e) {
-            GoogleJsonError error = e.getDetails();
-            System.out.println(error.getMessage());
+            e.printStackTrace();
         }
     }
 
@@ -108,7 +107,7 @@ public class SheetAPI {
                     .setValues(values);
 
             service.spreadsheets().values()
-                    .append(spreadsheetId, range, body)
+                    .update(spreadsheetId, range, body)
                     .setValueInputOption("RAW")
                     .execute();
         } catch (GoogleJsonResponseException e) {

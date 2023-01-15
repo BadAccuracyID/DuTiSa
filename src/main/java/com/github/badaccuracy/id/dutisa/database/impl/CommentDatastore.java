@@ -8,7 +8,9 @@ import com.github.badaccuracy.id.dutisa.database.objects.CommentData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Iterator;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 public class CommentDatastore {
 
@@ -32,9 +34,9 @@ public class CommentDatastore {
         return commentMap.get(commentId);
     }
 
-    public Iterator<CommentData> getComments(String traineeNumber) {
+    public List<CommentData> getComments(String traineeNumber) {
         return commentMap.values().stream()
-                .filter(commentData -> commentData.getTraineeNumber().equals(traineeNumber)).iterator();
+                .filter(commentData -> commentData.getTraineeNumber().equals(traineeNumber)).collect(Collectors.toList());
     }
 
     public void reloadComments() {
