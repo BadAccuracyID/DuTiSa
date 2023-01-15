@@ -1,5 +1,6 @@
 package com.github.badaccuracy.id.dutisa.googleapi;
 
+import com.github.badaccuracy.id.dutisa.database.objects.CommentData;
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp;
 import com.google.api.client.extensions.jetty.auth.oauth2.LocalServerReceiver;
@@ -14,7 +15,6 @@ import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.client.util.store.FileDataStoreFactory;
 import com.google.api.services.sheets.v4.Sheets;
 import com.google.api.services.sheets.v4.SheetsScopes;
-import com.google.api.services.sheets.v4.model.UpdateValuesResponse;
 import com.google.api.services.sheets.v4.model.ValueRange;
 import lombok.SneakyThrows;
 
@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -57,43 +58,59 @@ public class SheetAPI {
     }
 
     @SneakyThrows
-    public void doWrite(String sheetName, List<List<Object>> values) {
+    public void doWrite(String sheetName, List<CommentData> commentDataList) {
+        writeHeader(sheetName);
+
         NetHttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
         String range = sheetName + "!A2:C";
         Sheets service = new Sheets.Builder(httpTransport, jsonFactory, this.getCredential(httpTransport))
                 .setApplicationName(applicationName)
                 .build();
 
-        pushUpdate(range, service, values);
+        List<List<Object>> values = new ArrayList<>();
+        for (CommentData commentData : commentDataList) {
+            List<Object> row = new ArrayList<>();
+            row.add(commentData.getCommenter());
+            row.add(commentData.getDate());
+            row.add(commentData.getComment());
+
+            values.add(row);
+        }
+
+        ValueRange body = new ValueRange()
+                .setValues(values);
+
+        try {
+            service.spreadsheets().values().append(spreadsheetId, range, body)
+                    .setValueInputOption("RAW")
+                    .setInsertDataOption("INSERT_ROWS")
+                    .execute();
+        } catch (GoogleJsonResponseException e) {
+            GoogleJsonError error = e.getDetails();
+            System.out.println(error.getMessage());
+        }
     }
 
     @SneakyThrows
     private void writeHeader(String sheetName) {
         NetHttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
-        String range = sheetName + "!A2:C2";
+        String range = sheetName + "!A1:C1";
         Sheets service = new Sheets.Builder(httpTransport, jsonFactory, this.getCredential(httpTransport))
                 .setApplicationName(applicationName)
                 .build();
 
-        List<List<Object>> values = Arrays.asList(
+        List<List<Object>> values = List.of(
                 Arrays.asList("Sender", "Date", "Comment")
         );
 
-        pushUpdate(range, service, values);
-    }
-
-    private void pushUpdate(String range, Sheets service, List<List<Object>> values) {
-        UpdateValuesResponse response;
         try {
             ValueRange body = new ValueRange()
                     .setValues(values);
 
-            response = service.spreadsheets().values()
-                    .update(spreadsheetId, range, body)
-                    .setValueInputOption("raw")
+            service.spreadsheets().values()
+                    .append(spreadsheetId, range, body)
+                    .setValueInputOption("RAW")
                     .execute();
-
-            System.out.printf("%d cells updated.", response.getUpdatedCells());
         } catch (GoogleJsonResponseException e) {
             GoogleJsonError error = e.getDetails();
             if (error.getCode() == 401) {
