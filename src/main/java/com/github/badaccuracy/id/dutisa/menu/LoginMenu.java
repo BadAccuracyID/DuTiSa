@@ -194,7 +194,7 @@ public class LoginMenu {
 
         errorLabel = new Label();
         errorLabel.setFont(Font.font("Arial", FontWeight.BOLD, 16));
-        errorLabel.setTextFill(Paint.valueOf("#ff0000"));
+        errorLabel.setTextFill(Color.RED);
         errorLabel.setAlignment(Pos.CENTER);
         errorLabel.setContentDisplay(ContentDisplay.CENTER);
         errorLabel.setLayoutX(170);
@@ -222,7 +222,7 @@ public class LoginMenu {
                 return;
             }
 
-            new MainMenu(stage);
+            new MainMenu(stage, username);
         };
     }
 

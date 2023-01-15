@@ -1,11 +1,16 @@
 package com.github.badaccuracy.id.dutisa.menu;
 
+import com.github.badaccuracy.id.dutisa.DuTiSa;
+import com.github.badaccuracy.id.dutisa.database.manager.TraineeManager;
 import com.github.badaccuracy.id.dutisa.database.objects.CommentData;
+import com.github.badaccuracy.id.dutisa.database.objects.TraineeData;
 import com.github.badaccuracy.id.dutisa.utils.Utils;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
@@ -19,12 +24,17 @@ import javafx.stage.Stage;
 
 import java.io.File;
 import java.sql.Date;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class MainMenu {
 
     private final Stage stage;
     private Scene scene;
+
+    private String currentTraineeView;
+    private String currentUser;
+    private int currIdx = 0;
 
     private TextField searchField;
 
@@ -34,9 +44,26 @@ public class MainMenu {
 
     private Label errorLabel;
 
-    public MainMenu(Stage stage) {
+    public MainMenu(Stage stage, String currentUser) {
         this.stage = stage;
+        this.currentUser = currentUser;
         initUI();
+
+        TraineeManager traineeManager = DuTiSa.getInstance().getTraineeManager();
+        List<TraineeData> trainees = traineeManager.getTrainees();
+        int size = trainees.size();
+
+        // select random trainee
+        int randomIndex = (int) (Math.random() * size);
+        currIdx = randomIndex;
+        TraineeData trainee = trainees.get(randomIndex);
+
+        // set image
+        traineeProfilePicture.setImage(new Image(trainee.getPhoto().toURI().toString()));
+        fullTraineeNameLabel.setText(trainee.getTraineeNumber() + " - " + trainee.getTraineeName());
+        fullTraineeBinusianMajorLabel.setText(trainee.getBinusian() + " - " + trainee.getMajor());
+
+        currentTraineeView = trainee.getTraineeNumber();
 
         AtomicReference<Double> x = new AtomicReference<>(0.0);
         AtomicReference<Double> y = new AtomicReference<>(0.0);
@@ -100,22 +127,105 @@ public class MainMenu {
         fullTraineeNameLabel.setTextFill(Color.WHITE);
         fullTraineeNameLabel.setAlignment(Pos.CENTER);
         fullTraineeNameLabel.setContentDisplay(ContentDisplay.CENTER);
-        HBox labelBox = new HBox(fullTraineeNameLabel);
-        labelBox.setLayoutX(190);
-        labelBox.setLayoutY(390);
-        labelBox.setAlignment(Pos.CENTER);
-        leftPane.getChildren().add(labelBox);
+        HBox nameBox = new HBox(fullTraineeNameLabel);
+        nameBox.setAlignment(Pos.CENTER);
 
         fullTraineeBinusianMajorLabel = new Label();
-        fullTraineeBinusianMajorLabel.setFont(Font.font("Arial", FontWeight.BOLD, 12));
+        fullTraineeBinusianMajorLabel.setFont(Font.font("Arial", FontWeight.BOLD, 18));
         fullTraineeBinusianMajorLabel.setTextFill(Color.WHITE);
         fullTraineeBinusianMajorLabel.setAlignment(Pos.CENTER);
         fullTraineeBinusianMajorLabel.setContentDisplay(ContentDisplay.CENTER);
-        HBox mottoBox = new HBox(fullTraineeBinusianMajorLabel);
-        mottoBox.setLayoutX(120);
-        mottoBox.setLayoutY(430);
-        mottoBox.setAlignment(Pos.CENTER);
-        leftPane.getChildren().add(mottoBox);
+        HBox binusianBox = new HBox(fullTraineeBinusianMajorLabel);
+        binusianBox.setAlignment(Pos.CENTER);
+
+        VBox nameAndBinusianBox = new VBox(nameBox, binusianBox);
+        nameAndBinusianBox.setLayoutX(100);
+        nameAndBinusianBox.setLayoutY(390);
+        nameAndBinusianBox.setAlignment(Pos.CENTER);
+        nameAndBinusianBox.setSpacing(10);
+        leftPane.getChildren().add(nameAndBinusianBox);
+
+
+        Button prevButton = new Button("Previous");
+        prevButton.setLayoutX(100);
+        prevButton.setLayoutY(500);
+        prevButton.setPrefWidth(125);
+        prevButton.setPrefHeight(35);
+        prevButton.getStyleClass().add("login-btn");
+        prevButton.getStylesheets().add(styleCss);
+        prevButton.applyCss();
+        prevButton.setOnAction(event -> {
+            TraineeManager traineeManager = DuTiSa.getInstance().getTraineeManager();
+            List<TraineeData> trainees = traineeManager.getTrainees();
+            int size = trainees.size();
+
+            currIdx = (currIdx - 1 + size) % size;
+            TraineeData trainee = trainees.get(currIdx);
+
+            // set image
+            traineeProfilePicture.setImage(new Image(trainee.getPhoto().toURI().toString()));
+            fullTraineeNameLabel.setText(trainee.getTraineeNumber() + " - " + trainee.getTraineeName());
+            fullTraineeBinusianMajorLabel.setText(trainee.getBinusian() + " - " + trainee.getMajor());
+
+            currentTraineeView = trainee.getTraineeNumber();
+        });
+        leftPane.getChildren().add(prevButton);
+
+        Button nextButton = new Button("Next");
+        nextButton.setLayoutX(275);
+        nextButton.setLayoutY(500);
+        nextButton.setPrefWidth(125);
+        nextButton.setPrefHeight(35);
+        nextButton.getStyleClass().add("login-btn");
+        nextButton.getStylesheets().add(styleCss);
+        nextButton.applyCss();
+        nextButton.setOnAction(event -> {
+            TraineeManager traineeManager = DuTiSa.getInstance().getTraineeManager();
+            List<TraineeData> trainees = traineeManager.getTrainees();
+            int size = trainees.size();
+
+            currIdx = (currIdx + 1) % size;
+            TraineeData trainee = trainees.get(currIdx);
+
+            // set image
+            traineeProfilePicture.setImage(new Image(trainee.getPhoto().toURI().toString()));
+            fullTraineeNameLabel.setText(trainee.getTraineeNumber() + " - " + trainee.getTraineeName());
+            fullTraineeBinusianMajorLabel.setText(trainee.getBinusian() + " - " + trainee.getMajor());
+
+            currentTraineeView = trainee.getTraineeNumber();
+        });
+        leftPane.getChildren().add(nextButton);
+
+        // search bar
+        TextField searchField = new TextField();
+        searchField.setPromptText("Search Trainee");
+        searchField.setLayoutX(100);
+        searchField.setLayoutY(550);
+        searchField.setPrefWidth(300);
+        searchField.setPrefHeight(35);
+        searchField.getStyleClass().add("search-field");
+        searchField.getStylesheets().add(styleCss);
+        searchField.applyCss();
+        searchField.textProperty().addListener((observable, oldValue, newValue) -> {
+            TraineeManager traineeManager = DuTiSa.getInstance().getTraineeManager();
+            List<TraineeData> trainees = traineeManager.getTrainees();
+            int size = trainees.size();
+
+            for (int i = 0; i < size; i++) {
+                TraineeData trainee = trainees.get(i);
+                if (trainee.getTraineeNumber().equals(newValue)) {
+                    currIdx = i;
+                    traineeProfilePicture.setImage(new Image(trainee.getPhoto().toURI().toString()));
+                    fullTraineeNameLabel.setText(trainee.getTraineeNumber() + " - " + trainee.getTraineeName());
+                    fullTraineeBinusianMajorLabel.setText(trainee.getBinusian() + " - " + trainee.getMajor());
+
+                    currentTraineeView = trainee.getTraineeNumber();
+                    break;
+                }
+            }
+        });
+        leftPane.getChildren().add(searchField);
+
 
         loginPane.getChildren().add(leftPane);
 
@@ -128,69 +238,30 @@ public class MainMenu {
         rightPane.setStyle("-fx-background-color: #F3F3F3;");
         rightPane.applyCss();
 
-//        Label loginLabel = new Label("Login");
-//        loginLabel.setFont(Font.font("Arial", FontWeight.BOLD, 25));
-//        loginLabel.setTextFill(Paint.valueOf("#e34c9d"));
-//        loginLabel.setAlignment(Pos.CENTER);
-//        loginLabel.setContentDisplay(ContentDisplay.CENTER);
-//        loginLabel.setLayoutX(215);
-//        loginLabel.setLayoutY(120);
-//        rightPane.getChildren().add(loginLabel);
+        // the comments, Y = 120 | X = 215?
 
-        ScrollPane scrollPane = new ScrollPane();
+        TextArea commentArea = new TextArea();
+        commentArea.setPrefWidth(400);
+        commentArea.setPrefHeight(90);
+        commentArea.setLayoutX(60);
+        commentArea.setLayoutY(420);
+        commentArea.setWrapText(true);
+        commentArea.setPromptText("Write your comments here...");
+        commentArea.getStyleClass().add("text-area");
+        commentArea.getStylesheets().add(styleCss);
+        commentArea.applyCss();
+        rightPane.getChildren().add(commentArea);
 
-        TableView<CommentData> tableView = new TableView<>();
-
-        TableColumn<CommentData, String> commenterColumn = new TableColumn<>("Commenter");
-        commenterColumn.setCellValueFactory(new PropertyValueFactory<>("commenter"));
-        commenterColumn.setPrefWidth(200);
-
-        TableColumn<CommentData, Date> dateColumn = new TableColumn<>("Date");
-        dateColumn.setCellValueFactory(new PropertyValueFactory<>("date"));
-        dateColumn.setPrefWidth(200);
-
-        TableColumn<CommentData, String> commentColumn = new TableColumn<>("Comment");
-        commentColumn.setCellValueFactory(new PropertyValueFactory<>("comment"));
-        commentColumn.setPrefWidth(200);
-
-        tableView.getColumns().add(commenterColumn);
-        tableView.getColumns().add(dateColumn);
-        tableView.getColumns().add(commentColumn);
-
-        rightPane.getChildren().add(scrollPane);
-
-        scrollPane.setLayoutX(215);
-        scrollPane.setLayoutY(120);
-
-        HBox buttonsBox = new HBox();
-        buttonsBox.setSpacing(50);
-        buttonsBox.setPrefHeight(100);
-        buttonsBox.setPrefWidth(500);
-        buttonsBox.setLayoutX(1);
-        buttonsBox.setLayoutY(370);
-        buttonsBox.setAlignment(Pos.CENTER);
-
-//        Button loginButton = new Button("Login");
-//        loginButton.setPrefWidth(175);
-//        loginButton.setPrefHeight(50);
-//        loginButton.getStylesheets().add(styleCss);
-//        loginButton.getStyleClass().add("login-btn");
-//        loginButton.setTextAlignment(TextAlignment.CENTER);
-//        loginButton.applyCss();
-//        loginButton.setOnAction(this.onSubmit());
-//        buttonsBox.getChildren().add(loginButton);
-//
-//        Button registerButton = new Button("Register");
-//        registerButton.setPrefWidth(175);
-//        registerButton.setPrefHeight(50);
-//        registerButton.getStylesheets().add(styleCss);
-//        registerButton.getStyleClass().add("login-btn");
-//        registerButton.setTextAlignment(TextAlignment.CENTER);
-//        registerButton.applyCss();
-//        registerButton.setOnAction(this.onRegister());
-//        buttonsBox.getChildren().add(registerButton);
-
-        rightPane.getChildren().add(buttonsBox);
+        Button submitButton = new Button("Submit");
+        submitButton.setPrefWidth(100);
+        submitButton.setPrefHeight(25);
+        submitButton.getStyleClass().add("login-btn");
+        submitButton.getStylesheets().add(styleCss);
+        submitButton.applyCss();
+        submitButton.setLayoutX(200);
+        submitButton.setLayoutY(517);
+        submitButton.setOnAction(this.onSubmit(commentArea));
+        rightPane.getChildren().add(submitButton);
 
         errorLabel = new Label();
         errorLabel.setFont(Font.font("Arial", FontWeight.BOLD, 16));
@@ -206,4 +277,13 @@ public class MainMenu {
         scene = new Scene(rootPane);
     }
 
+    private EventHandler<ActionEvent> onSubmit(TextArea commentArea) {
+        return event -> {
+            String text = commentArea.getText();
+
+
+            CommentData commentData = new CommentData(0, currentTraineeView, text, currentUser, new Date(System.currentTimeMillis()));
+            DuTiSa.getInstance().getTraineeManager().postComment(commentData);
+        };
+    }
 }

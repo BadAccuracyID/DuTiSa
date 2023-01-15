@@ -57,7 +57,12 @@ public class TraineeManager {
 
     public boolean canLogin(String traineeNumber, String password) {
         String hashedPassword = Utils.hashPassword(password);
-        return traineeDatastore.getTrainee(traineeNumber).getLoginData().getHashedPassword().equals(hashedPassword);
+        TraineeData trainee = traineeDatastore.getTrainee(traineeNumber);
+        if (trainee == null) {
+            return false;
+        }
+
+        return trainee.getLoginData().getHashedPassword().equals(hashedPassword);
     }
 
     public boolean canRegister(String traineeNumber, String traineeName, String password, String jurusan, String angkatan, File photo) {

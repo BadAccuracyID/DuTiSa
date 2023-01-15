@@ -292,7 +292,7 @@ public class RegisterMenu {
                 return;
             }
 
-            new MainMenu(stage);
+            new MainMenu(stage, username);
         };
     }
 
