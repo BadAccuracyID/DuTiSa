@@ -278,6 +278,12 @@ public class RegisterMenu {
             String jurusan = this.majorField.getText();
             String angkatan = this.angkatanField.getText();
 
+            DuTiSa instance = DuTiSa.getInstance();
+            if (!instance.getTraineeManager().getMySQL().isConnected()) {
+                AlertPopup.showAlert("MySQL is still connecting!", Alert.AlertType.ERROR, this.scene);
+                return;
+            }
+
             if (username.isEmpty() || password.isEmpty() || traineeName.isEmpty() || jurusan.isEmpty() || angkatan.isEmpty()) {
                 AlertPopup.showAlert("Please fill in all fields", Alert.AlertType.WARNING, this.scene);
                 return;
@@ -300,7 +306,7 @@ public class RegisterMenu {
                 return;
             }
 
-            boolean canRegister = DuTiSa.getInstance().getTraineeManager()
+            boolean canRegister = instance.getTraineeManager()
                     .canRegister(username, traineeName, password, jurusan, angkatan, pfpFile);
 
             if (!canRegister) {

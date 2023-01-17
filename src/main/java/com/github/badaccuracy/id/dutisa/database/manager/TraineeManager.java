@@ -10,6 +10,7 @@ import com.github.badaccuracy.id.dutisa.database.objects.LoginData;
 import com.github.badaccuracy.id.dutisa.database.objects.TraineeData;
 import com.github.badaccuracy.id.dutisa.googleapi.SheetAPI;
 import com.github.badaccuracy.id.dutisa.utils.Utils;
+import lombok.Getter;
 
 import java.io.File;
 import java.sql.SQLException;
@@ -20,6 +21,7 @@ import java.util.List;
 public class TraineeManager {
 
     private final DuTiSa main;
+    @Getter
     private final MySQL mySQL;
     private final SheetAPI sheetAPI;
     private CommentDatastore commentDatastore;

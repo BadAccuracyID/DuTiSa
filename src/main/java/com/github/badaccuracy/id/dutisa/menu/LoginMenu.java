@@ -272,12 +272,18 @@ public class LoginMenu {
             String username = this.usernameField.getText();
             String password = this.passwordField.getText();
 
+            DuTiSa instance = DuTiSa.getInstance();
+            if (!instance.getTraineeManager().getMySQL().isConnected()) {
+                AlertPopup.showAlert("MySQL is still connecting!", Alert.AlertType.ERROR, this.scene);
+                return;
+            }
+
             if (username.isEmpty() || password.isEmpty()) {
                 AlertPopup.showAlert("Please fill in all fields", Alert.AlertType.WARNING, this.scene);
                 return;
             }
 
-            boolean canLogin = DuTiSa.getInstance().getTraineeManager().canLogin(username, password);
+            boolean canLogin = instance.getTraineeManager().canLogin(username, password);
             if (!canLogin) {
                 AlertPopup.showAlert("Invalid username or password", Alert.AlertType.ERROR, this.scene);
                 return;
