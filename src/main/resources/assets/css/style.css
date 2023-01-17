@@ -48,16 +48,3 @@
 .blue-purple-gradient {
     -fx-background-color: linear-gradient(from 25% 25% to 100% 100%, #2e22ac, #e34c9d);
 }
-
-#title {
-    -fx-text-fill: #2e22ac;
-}
-
-#image-shadow {
-    -fx-effect: dropshadow(three-pass-box, #000000, 10, 0, 2, 2);
-}
-
-#copyright {
-    -fx-font-family: 'Arial';
-    -fx-text-fill: #ffffff;
-}
