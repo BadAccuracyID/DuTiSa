@@ -79,6 +79,8 @@ public class TraineeManager {
 
         traineeDatastore.addTrainee(traineeData);
         traineeDatastore.insertNewTrainee(traineeData);
+        main.getExecutorManager().gocExecutor("SheetCreator")
+                .execute(() -> sheetAPI.createNewSheet(traineeNumber));
         return true;
     }
 

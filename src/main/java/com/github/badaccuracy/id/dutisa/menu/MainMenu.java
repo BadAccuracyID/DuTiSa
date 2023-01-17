@@ -86,12 +86,14 @@ public class MainMenu {
         listView.setLayoutY(10);
 
         listView.getItems().clear();
-        commentDataList.forEach(commentData -> {
-            String comment = commentData.getComment();
-            String date = commentData.getDate().toString();
-            String author = commentData.getCommenter();
-            listView.getItems().add(author + "@" + date + ": " + comment);
-        });
+        if (!commentDataList.isEmpty()) {
+            commentDataList.forEach(commentData -> {
+                String comment = commentData.getComment();
+                String date = commentData.getDate().toString();
+                String author = commentData.getCommenter();
+                listView.getItems().add(author + "@" + date + ": " + comment);
+            });
+        }
         rightPane.getChildren().add(listView);
 
 
