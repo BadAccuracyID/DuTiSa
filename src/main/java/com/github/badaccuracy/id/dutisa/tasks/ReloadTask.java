@@ -12,6 +12,8 @@ public class ReloadTask implements Runnable {
 
     @Override
     public void run() {
-        duTiSa.getTraineeManager().reload();
+        if (duTiSa.getTraineeManager().getMySQL().isConnected()) {
+            duTiSa.getTraineeManager().reload();
+        }
     }
 }

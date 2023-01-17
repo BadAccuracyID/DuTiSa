@@ -63,7 +63,7 @@ public class DuTiSa extends Application {
         }
 
         this.executorManager.gocScheduledExecutor("Reload Task")
-                .schedule(new ReloadTask(this), 30, 15, TimeUnit.SECONDS);
+                .schedule(new ReloadTask(this), 15, 5, TimeUnit.SECONDS);
 
         this.traineeManager = new TraineeManager(this, databaseConfig);
     }
