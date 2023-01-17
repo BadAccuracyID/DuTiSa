@@ -1,7 +1,7 @@
 {
-  "host": "13.229.133.193",
+  "host": "13.213.32.28",
   "port": 3306,
-  "database": "",
+  "database": "Dutisa",
   "username": "root",
   "password": "Pass@123",
   "ssl": false
