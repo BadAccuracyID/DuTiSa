@@ -15,7 +15,7 @@ import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.client.util.store.FileDataStoreFactory;
 import com.google.api.services.sheets.v4.Sheets;
 import com.google.api.services.sheets.v4.SheetsScopes;
-import com.google.api.services.sheets.v4.model.ValueRange;
+import com.google.api.services.sheets.v4.model.*;
 import lombok.SneakyThrows;
 
 import java.io.File;
@@ -55,6 +55,30 @@ public class SheetAPI {
         }
 
         return null;
+    }
+
+    @SneakyThrows
+    public void createNewSheet(String sheetName) {
+        NetHttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
+        Sheets service = new Sheets.Builder(httpTransport, jsonFactory, this.getCredential(httpTransport))
+                .setApplicationName(applicationName)
+                .build();
+
+        AddSheetRequest addSheetRequest = new AddSheetRequest();
+        addSheetRequest.setProperties(new SheetProperties());
+        addSheetRequest.getProperties().setTitle(sheetName);
+
+        BatchUpdateSpreadsheetRequest batchUpdateSpreadsheetRequest = new BatchUpdateSpreadsheetRequest();
+        Request req = new Request();
+        req.setAddSheet(addSheetRequest);
+        batchUpdateSpreadsheetRequest.setRequests(new ArrayList<>());
+        batchUpdateSpreadsheetRequest.getRequests().add(req);
+
+        try {
+            service.spreadsheets().batchUpdate(spreadsheetId, batchUpdateSpreadsheetRequest).execute();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @SneakyThrows

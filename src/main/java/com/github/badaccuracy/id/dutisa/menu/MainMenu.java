@@ -269,6 +269,14 @@ public class MainMenu {
                     fullTraineeBinusianMajorLabel.setText(trainee.getBinusian() + " - " + trainee.getMajor());
 
                     currentTraineeView = trainee.getTraineeNumber();
+                    commentDataList = DuTiSa.getInstance().getTraineeManager().getComments(currentTraineeView);
+                    listView.getItems().clear();
+                    commentDataList.forEach(commentData -> {
+                        String comment = commentData.getComment();
+                        String date = commentData.getDate().toString();
+                        String author = commentData.getCommenter();
+                        listView.getItems().add(author + "@" + date + ": " + comment);
+                    });
                     break;
                 }
             }
