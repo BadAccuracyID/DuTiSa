@@ -1,6 +1,7 @@
 package com.github.badaccuracy.id.dutisa.menu;
 
 import com.github.badaccuracy.id.dutisa.DuTiSa;
+import com.github.badaccuracy.id.dutisa.utils.AlertPopup;
 import com.github.badaccuracy.id.dutisa.utils.Utils;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -36,7 +37,6 @@ public class LoginMenu {
     private PasswordField passwordField;
 
     private Group foxGroup;
-    private Label errorLabel;
 
     public LoginMenu(Stage stage) {
         this.stage = stage;
@@ -191,14 +191,20 @@ public class LoginMenu {
 
         rightPane.getChildren().add(buttonsBox);
 
-        errorLabel = new Label();
-        errorLabel.setFont(Font.font("Arial", FontWeight.BOLD, 16));
-        errorLabel.setTextFill(Color.RED);
-        errorLabel.setAlignment(Pos.CENTER);
-        errorLabel.setContentDisplay(ContentDisplay.CENTER);
-        errorLabel.setLayoutX(170);
-        errorLabel.setLayoutY(500);
-        rightPane.getChildren().add(errorLabel);
+        // exit button
+        Button exitButton = new Button("X");
+        exitButton.setPrefWidth(30);
+        exitButton.setPrefHeight(30);
+        exitButton.getStylesheets().add(styleCss);
+        exitButton.getStyleClass().add("exit-btn");
+        exitButton.setTextAlignment(TextAlignment.CENTER);
+        exitButton.applyCss();
+        exitButton.setLayoutX(470);
+        exitButton.setLayoutY(10);
+        exitButton.setOnAction(event -> {
+            System.exit(0);
+        });
+        rightPane.getChildren().add(exitButton);
 
         loginPane.getChildren().add(rightPane);
 
@@ -267,13 +273,13 @@ public class LoginMenu {
             String password = this.passwordField.getText();
 
             if (username.isEmpty() || password.isEmpty()) {
-                errorLabel.setText("Please fill in all fields");
+                AlertPopup.showAlert("Please fill in all fields", Alert.AlertType.WARNING, this.scene);
                 return;
             }
 
             boolean canLogin = DuTiSa.getInstance().getTraineeManager().canLogin(username, password);
             if (!canLogin) {
-                errorLabel.setText("Invalid username or password");
+                AlertPopup.showAlert("Invalid username or password", Alert.AlertType.ERROR, this.scene);
                 return;
             }
 

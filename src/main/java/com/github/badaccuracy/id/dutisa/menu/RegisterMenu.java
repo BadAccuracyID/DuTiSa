@@ -1,6 +1,7 @@
 package com.github.badaccuracy.id.dutisa.menu;
 
 import com.github.badaccuracy.id.dutisa.DuTiSa;
+import com.github.badaccuracy.id.dutisa.utils.AlertPopup;
 import com.github.badaccuracy.id.dutisa.utils.Utils;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -42,7 +43,6 @@ public class RegisterMenu {
 
 
     private Group foxGroup;
-    private Label errorLabel;
 
     public RegisterMenu(Stage stage) {
         this.stage = stage;
@@ -249,14 +249,20 @@ public class RegisterMenu {
 
         rightPane.getChildren().add(buttonsBox);
 
-        errorLabel = new Label();
-        errorLabel.setFont(Font.font("Arial", FontWeight.BOLD, 16));
-        errorLabel.setTextFill(Paint.valueOf("#ff0000"));
-        errorLabel.setAlignment(Pos.CENTER);
-        errorLabel.setContentDisplay(ContentDisplay.CENTER);
-        errorLabel.setLayoutX(170);
-        errorLabel.setLayoutY(520);
-        rightPane.getChildren().add(errorLabel);
+        // exit button
+        Button exitButton = new Button("X");
+        exitButton.setPrefWidth(30);
+        exitButton.setPrefHeight(30);
+        exitButton.getStylesheets().add(styleCss);
+        exitButton.getStyleClass().add("exit-btn");
+        exitButton.setTextAlignment(TextAlignment.CENTER);
+        exitButton.applyCss();
+        exitButton.setLayoutX(470);
+        exitButton.setLayoutY(10);
+        exitButton.setOnAction(event -> {
+            System.exit(0);
+        });
+        rightPane.getChildren().add(exitButton);
 
         loginPane.getChildren().add(rightPane);
 
@@ -273,12 +279,24 @@ public class RegisterMenu {
             String angkatan = this.angkatanField.getText();
 
             if (username.isEmpty() || password.isEmpty() || traineeName.isEmpty() || jurusan.isEmpty() || angkatan.isEmpty()) {
-                errorLabel.setText("Please fill in all fields");
+                AlertPopup.showAlert("Please fill in all fields", Alert.AlertType.WARNING, this.scene);
                 return;
             }
 
             if (pfpFile == null) {
-                errorLabel.setText("Please select your profile picture");
+                AlertPopup.showAlert("Please select your profile picture", Alert.AlertType.WARNING, this.scene);
+                return;
+            }
+
+            // if traineeNumber is not T999
+            if (!username.matches("T\\d{3}")) {
+                AlertPopup.showAlert("Trainee number must be in format T999", Alert.AlertType.WARNING, this.scene);
+                return;
+            }
+
+            // if angkatan is not B99
+            if (!angkatan.matches("B\\d{2}")) {
+                AlertPopup.showAlert("Angkatan must be in format B99", Alert.AlertType.WARNING, this.scene);
                 return;
             }
 
@@ -286,7 +304,7 @@ public class RegisterMenu {
                     .canRegister(username, traineeName, password, jurusan, angkatan, pfpFile);
 
             if (!canRegister) {
-                errorLabel.setText("Username already taken!");
+                AlertPopup.showAlert("Username already taken!", Alert.AlertType.WARNING, this.scene);
                 return;
             }
 

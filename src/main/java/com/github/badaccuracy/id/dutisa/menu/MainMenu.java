@@ -4,6 +4,7 @@ import com.github.badaccuracy.id.dutisa.DuTiSa;
 import com.github.badaccuracy.id.dutisa.database.manager.TraineeManager;
 import com.github.badaccuracy.id.dutisa.database.objects.CommentData;
 import com.github.badaccuracy.id.dutisa.database.objects.TraineeData;
+import com.github.badaccuracy.id.dutisa.utils.AlertPopup;
 import com.github.badaccuracy.id.dutisa.utils.Utils;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -17,14 +18,15 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 
 import java.io.File;
 import java.sql.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class MainMenu {
@@ -40,8 +42,6 @@ public class MainMenu {
     private Label fullTraineeBinusianMajorLabel;
     private List<CommentData> commentDataList;
     private AnchorPane rightPane;
-
-    private Label errorLabel;
 
     public MainMenu(Stage stage, String currentUser) {
         this.stage = stage;
@@ -85,6 +85,7 @@ public class MainMenu {
         listView.setLayoutX(50);
         listView.setLayoutY(10);
 
+        listView.getItems().clear();
         commentDataList.forEach(commentData -> {
             String comment = commentData.getComment();
             String date = commentData.getDate().toString();
@@ -286,9 +287,6 @@ public class MainMenu {
         rightPane.setStyle("-fx-background-color: #F3F3F3;");
         rightPane.applyCss();
 
-        // the comments, Y = 120 | X = 215?
-
-
         TextArea commentArea = new TextArea();
         commentArea.setPrefWidth(400);
         commentArea.setPrefHeight(90);
@@ -312,14 +310,33 @@ public class MainMenu {
         submitButton.setOnAction(this.onSubmit(commentArea));
         rightPane.getChildren().add(submitButton);
 
-        errorLabel = new Label();
-        errorLabel.setFont(Font.font("Arial", FontWeight.BOLD, 16));
-        errorLabel.setTextFill(Paint.valueOf("#ff0000"));
-        errorLabel.setAlignment(Pos.CENTER);
-        errorLabel.setContentDisplay(ContentDisplay.CENTER);
-        errorLabel.setLayoutX(170);
-        errorLabel.setLayoutY(500);
-        rightPane.getChildren().add(errorLabel);
+        // exit button
+        Button exitButton = new Button("X");
+        exitButton.setPrefWidth(30);
+        exitButton.setPrefHeight(30);
+        exitButton.getStylesheets().add(styleCss);
+        exitButton.getStyleClass().add("exit-btn");
+        exitButton.setTextAlignment(TextAlignment.CENTER);
+        exitButton.applyCss();
+        exitButton.setLayoutX(470);
+        exitButton.setLayoutY(10);
+        exitButton.setOnAction(event -> {
+            System.exit(0);
+        });
+        rightPane.getChildren().add(exitButton);
+
+        Button logOutBtn = new Button("Log Out");
+        logOutBtn.setPrefWidth(100);
+        logOutBtn.setPrefHeight(17);
+        logOutBtn.getStyleClass().add("login-btn");
+        logOutBtn.getStylesheets().add(styleCss);
+        logOutBtn.applyCss();
+        logOutBtn.setLayoutX(400);
+        logOutBtn.setLayoutY(510);
+        logOutBtn.setOnMouseClicked(event -> {
+            new LoginMenu(this.stage);
+        });
+        rightPane.getChildren().add(logOutBtn);
 
         loginPane.getChildren().add(rightPane);
 
@@ -330,16 +347,21 @@ public class MainMenu {
         return event -> {
             String text = commentArea.getText();
             if (text.isEmpty()) {
-                errorLabel.setText("Comment cannot be empty!");
+                AlertPopup.showAlert("Message must not be empty!", Alert.AlertType.WARNING, this.scene);
+                return;
+            }
+
+            if (Objects.equals(currentUser, currentTraineeView)) {
+                AlertPopup.showAlert("You cannot comment on your own profile!", Alert.AlertType.WARNING, this.scene);
                 return;
             }
 
             CommentData commentData = new CommentData(0, currentTraineeView, text, currentUser, new Date(System.currentTimeMillis()));
-            DuTiSa.getInstance().getTraineeManager().postComment(commentData);
-
+            DuTiSa duTiSa = DuTiSa.getInstance();
+            duTiSa.getTraineeManager().postComment(commentData);
             commentArea.clear();
 
-            commentDataList = DuTiSa.getInstance().getTraineeManager().getComments(currentTraineeView);
+            commentDataList = duTiSa.getTraineeManager().getComments(currentTraineeView);
             listView.getItems().clear();
             commentDataList.forEach(it -> {
                 String comment = it.getComment();
