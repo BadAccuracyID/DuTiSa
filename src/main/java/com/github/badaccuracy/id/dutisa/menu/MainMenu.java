@@ -86,7 +86,7 @@ public class MainMenu {
         listView.setLayoutY(10);
 
         listView.getItems().clear();
-        if (!commentDataList.isEmpty()) {
+        if (commentDataList != null && !commentDataList.isEmpty()) {
             commentDataList.forEach(commentData -> {
                 String comment = commentData.getComment();
                 String date = commentData.getDate().toString();
