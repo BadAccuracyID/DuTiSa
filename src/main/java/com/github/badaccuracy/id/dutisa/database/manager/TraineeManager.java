@@ -51,6 +51,11 @@ public class TraineeManager {
                 });
     }
 
+    public void reload() {
+        this.commentDatastore.reloadComments();
+        this.traineeDatastore.reloadTrainees();
+    }
+
     public List<TraineeData> getTrainees() {
         return new ArrayList<>(traineeDatastore.getTraineeMap().values());
     }

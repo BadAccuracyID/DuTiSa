@@ -4,12 +4,12 @@ import com.github.badaccuracy.id.dutisa.async.ExecutorManager;
 import com.github.badaccuracy.id.dutisa.database.manager.TraineeManager;
 import com.github.badaccuracy.id.dutisa.database.objects.DatabaseConfig;
 import com.github.badaccuracy.id.dutisa.menu.LoginMenu;
+import com.github.badaccuracy.id.dutisa.tasks.ReloadTask;
 import com.github.badaccuracy.id.dutisa.utils.Utils;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import javafx.application.Application;
 import javafx.scene.Scene;
-import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import lombok.Getter;
@@ -18,7 +18,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.TimeUnit;
 
 @Getter
 public class DuTiSa extends Application {
@@ -36,7 +36,6 @@ public class DuTiSa extends Application {
             executorManager.shutdown();
         }));
         instance = this;
-
 
         DatabaseConfig databaseConfig = null;
 
@@ -62,6 +61,9 @@ public class DuTiSa extends Application {
             System.out.println("Failed to load database config");
             System.exit(1);
         }
+
+        this.executorManager.gocScheduledExecutor("Reload Task")
+                .schedule(new ReloadTask(this), 30, 15, TimeUnit.SECONDS);
 
         this.traineeManager = new TraineeManager(this, databaseConfig);
     }

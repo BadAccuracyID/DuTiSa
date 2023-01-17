@@ -76,8 +76,8 @@ public class SheetAPI {
 
         try {
             service.spreadsheets().batchUpdate(spreadsheetId, batchUpdateSpreadsheetRequest).execute();
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException ignored) {
+            // it'll throw an error if the sheet already exists... sooooooo, lets just hide it *wink*
         }
     }
 
