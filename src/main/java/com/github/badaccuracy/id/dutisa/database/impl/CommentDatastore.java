@@ -7,16 +7,15 @@ import com.github.badaccuracy.id.dutisa.database.objects.CommentData;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Iterator;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 
 public class CommentDatastore {
 
     private final DuTiSa duTiSa;
     private final MySQL mySQL;
-    private final ConcurrentHashMap<Integer, CommentData> commentMap;
+    private final ConcurrentHashMap<String, List<CommentData>> commentMap;
 
     public CommentDatastore(DuTiSa duTiSa, MySQL mySQL) {
         this.duTiSa = duTiSa;
@@ -27,16 +26,15 @@ public class CommentDatastore {
     }
 
     public void addComment(CommentData commentData) {
-        commentMap.put(commentData.getCommentId(), commentData);
-    }
-
-    public CommentData getComment(Integer commentId) {
-        return commentMap.get(commentId);
+        if (commentMap.containsKey(commentData.getTraineeNumber())) {
+            commentMap.get(commentData.getTraineeNumber()).add(commentData);
+        } else {
+            commentMap.put(commentData.getTraineeNumber(), new ArrayList<>(List.of(commentData)));
+        }
     }
 
     public List<CommentData> getComments(String traineeNumber) {
-        return commentMap.values().stream()
-                .filter(commentData -> commentData.getTraineeNumber().equals(traineeNumber)).collect(Collectors.toList());
+        return commentMap.get(traineeNumber);
     }
 
     public void reloadComments() {
@@ -51,18 +49,18 @@ public class CommentDatastore {
     private void loadComments() {
         duTiSa.getExecutorManager().gocExecutor("CommentDL")
                 .execute(() -> {
-                    try (Results results = mySQL.results("SELECT * FROM Motivasi;")) {
+                    try (Results results = mySQL.results("SELECT * FROM Motivation;")) {
                         while (true) {
                             ResultSet set = results.getResultSet();
                             if (!set.next())
                                 break;
 
                             CommentData commentData = new CommentData(
-                                    set.getInt("CommentID"),
+                                    set.getInt("ID"),
                                     set.getString("TraineeNumber"),
-                                    set.getString("PesanMotivasi"),
-                                    set.getString("SenderID"),
-                                    set.getDate("CommentDate")
+                                    set.getString("Message"),
+                                    set.getString("SenderTraineeNumber"),
+                                    set.getDate("SentDate")
                             );
                             addComment(commentData);
                         }
@@ -76,7 +74,7 @@ public class CommentDatastore {
         duTiSa.getExecutorManager().gocExecutor("CommentUL")
                 .execute(() -> {
                     try {
-                        mySQL.executeQuery("INSERT INTO Motivasi (TraineeNumber, PesanMotivasi, SenderID) VALUES ('" +
+                        mySQL.executeQuery("INSERT INTO Motivation (TraineeNumber, Message, SenderTraineeNumber) VALUES ('" +
                                 commentData.getTraineeNumber() + "', '" +
                                 commentData.getComment() + "', '" +
                                 commentData.getCommenter() + "');");

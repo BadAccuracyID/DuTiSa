@@ -77,8 +77,8 @@ public class TraineeDatastore {
                             TraineeData traineeData = new TraineeData(
                                     set.getString("TraineeNumber"),
                                     set.getString("TraineeName"),
-                                    set.getString("Jurusan"),
-                                    set.getString("Angkatan"),
+                                    set.getString("TraineeMajor"),
+                                    set.getString("TraineeGeneration"),
                                     file
                             );
 
@@ -99,7 +99,7 @@ public class TraineeDatastore {
         duTiSa.getExecutorManager().gocExecutor("TraineeUL")
                 .execute(() -> {
                     try {
-                        String prepared = "INSERT INTO ListTrainee (TraineeNumber, TraineeName, TraineePassword, Jurusan, Angkatan, TraineePicture) VALUES (?, ?, ?, ?, ?, ?);";
+                        String prepared = "INSERT INTO ListTrainee (TraineeNumber, TraineeName, TraineePassword, TraineeMajor, TraineeGeneration, TraineePicture) VALUES (?, ?, ?, ?, ?, ?);";
                         PreparedStatement statement = mySQL.prepareQuery(prepared);
                         statement.setString(1, traineeData.getTraineeNumber());
                         statement.setString(2, traineeData.getTraineeName());
