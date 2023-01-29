@@ -32,10 +32,10 @@ import java.util.concurrent.atomic.AtomicReference;
 public class MainMenu {
 
     private final Stage stage;
-    private ListView<String> listView;
+    private final ListView<String> listView;
+    private final String currentUser;
     private Scene scene;
     private String currentTraineeView;
-    private String currentUser;
     private int currIdx;
     private ImageView traineeProfilePicture;
     private Label fullTraineeNameLabel;

@@ -9,7 +9,6 @@ import com.github.badaccuracy.id.dutisa.utils.Utils;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import javafx.application.Application;
-import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import lombok.Getter;
@@ -28,7 +27,6 @@ public class DuTiSa extends Application {
     private final ExecutorManager executorManager = new ExecutorManager();
     private final TraineeManager traineeManager;
     private Stage stage;
-    private Scene scene;
 
     public DuTiSa() {
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {

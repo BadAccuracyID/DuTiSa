@@ -15,7 +15,7 @@ public class AlertPopup {
     private final File file = Utils.getFile("assets/css/style.css");
     private final String styleCss = file.toURI().toString();
 
-    public void showAlert(String message, Alert.AlertType alertType) {
+    private Alert createBaseAlert(String message, Alert.AlertType alertType) {
         Alert alert = new Alert(alertType);
         alert.setContentText(message);
         alert.initStyle(StageStyle.TRANSPARENT);
@@ -25,24 +25,19 @@ public class AlertPopup {
         dialogPane.getStyleClass().add("alert");
         dialogPane.applyCss();
 
-        alert.showAndWait();
+        return alert;
     }
 
     public void showAlert(String message, Alert.AlertType alertType, Scene currentScene) {
-        Alert alert = new Alert(alertType);
-        alert.setContentText(message);
-        alert.initStyle(StageStyle.TRANSPARENT);
-
-        DialogPane dialogPane = alert.getDialogPane();
-        dialogPane.getStylesheets().add(styleCss);
-        dialogPane.getStyleClass().add("alert");
-        dialogPane.applyCss();
+        Alert alert = createBaseAlert(message, alertType);
 
         // blur scene
         currentScene.getRoot().setEffect(new BoxBlur(3, 3, 6));
 
+        // show
         alert.showAndWait().get();
-        // un blur
+
+        // un-blur
         currentScene.getRoot().setEffect(null);
     }
 }

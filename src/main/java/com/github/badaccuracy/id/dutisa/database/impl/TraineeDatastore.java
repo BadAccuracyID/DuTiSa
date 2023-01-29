@@ -71,9 +71,6 @@ public class TraineeDatastore {
                                 outputStream.write(bytes);
                             }
 
-                            System.out.println("Loaded trainee " + set.getString("TraineeNumber") + " - " + set.getString("TraineeName"));
-                            System.out.println("Saved to " + file.getAbsolutePath());
-
                             TraineeData traineeData = new TraineeData(
                                     set.getString("TraineeNumber"),
                                     set.getString("TraineeName"),
@@ -107,7 +104,6 @@ public class TraineeDatastore {
                         statement.setString(4, traineeData.getMajor());
                         statement.setString(5, traineeData.getBinusian());
                         statement.setBlob(6, new FileInputStream(traineeData.getPhoto()));
-                        System.out.println(statement);
 
                         statement.execute();
                     } catch (Exception e) {
